@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.pha.pipoca.model.movie.Movie;
+import com.pha.pipoca.model.api.Movie;
 import com.pha.pipoca.view.MovieItemView;
 import com.pha.pipoca.view.MovieItemView_;
 
