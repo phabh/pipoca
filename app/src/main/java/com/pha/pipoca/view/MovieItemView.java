@@ -30,7 +30,7 @@ public class MovieItemView extends RelativeLayout {
 
     public void bind(Movie movie)
     {
-        String posterImage = ImagesPathBuilder.getPoster(MovieDBService.getInstance().getConfiguration(), movie, 2);
+        String posterImage = ImagesPathBuilder.getPoster(MovieDBService.getInstance().getConfiguration(), movie, 4);
 
         Picasso.with(this.getContext()).setIndicatorsEnabled(true);
 

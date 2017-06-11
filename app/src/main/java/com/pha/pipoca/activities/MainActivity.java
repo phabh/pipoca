@@ -1,14 +1,12 @@
 package com.pha.pipoca.activities;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.pha.pipoca.R;
 import com.pha.pipoca.adapters.MovieAdaper;
@@ -19,15 +17,13 @@ import com.pha.pipoca.model.api.ApiConstants;
 import com.pha.pipoca.model.api.Configuration;
 import com.pha.pipoca.model.api.Movie;
 import com.pha.pipoca.model.api.ResponseMovies;
+import com.pha.pipoca.utils.EndlessRecyclerViewScrollListener;
 import com.pha.pipoca.utils.ItemClickSupport;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -50,72 +46,65 @@ public class MainActivity extends AppCompatActivity implements ItemClickSupport.
     @ViewById(R.id.fragment_container)
     FrameLayout frameLayout;
 
+    @ViewById(R.id.movies_loading)
+    ProgressBar moviesLoading;
+
     @Bean
     MovieAdaper movieAdaper;
 
-    MovieDetailFragment movieDetailFragment;
-    ItemClickSupport itemClickSupport;
+    private ItemClickSupport itemClickSupport;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     @AfterViews
     public void afterViews() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(movieAdaper);
-        backgroundSetup();
+        moviesLoading.setVisibility(View.VISIBLE);
+        backgroundSetup(1);
         itemClickSupport = ItemClickSupport.addTo(recyclerView);
         itemClickSupport.setOnItemClickListener(this);
-    }
-
-    @AfterInject
-    public void afterInject(){
-
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                moviesLoading.setVisibility(View.VISIBLE);
+                backgroundSetup(page+1);
+            }
+        };
+        recyclerView.addOnScrollListener(scrollListener);
     }
 
     @UiThread
     public void updateData(List<Movie> newList)
     {
-        movieAdaper.addItems(newList);
-        movieAdaper.notifyDataSetChanged();
-
+        if( newList.size() > 0 ) {
+            movieAdaper.addItems(newList);
+            movieAdaper.notifyDataSetChanged();
+        }
+        moviesLoading.setVisibility(View.INVISIBLE);
     }
 
     @Background
-    public void backgroundSetup() {
+    public void backgroundSetup(int page) {
         try {
-            MovieDBService.getInstance().getClient().getConfiguration(ApiConstants.API_KEY).enqueue(new Callback<Configuration>() {
-                @Override
-                public void onResponse(Call<Configuration> call, Response<Configuration> response) {
-                    int statusCode = response.code();
-                    MovieDBService.getInstance().setConfiguration(response.body());
-                }
+            Configuration configuration = MovieDBService
+                    .getInstance()
+                    .getClient()
+                    .getConfiguration(ApiConstants.API_KEY)
+                    .execute()
+                    .body();
+            MovieDBService.getInstance().setConfiguration(configuration);
 
-                @Override
-                public void onFailure(Call<Configuration> call, Throwable t) {
-                    // Log error here since request failed
-                }
-            });
-            MovieDBService.getInstance().getClient().getConfiguration(ApiConstants.API_KEY).execute();
-
-
-
-            MovieDBService.getInstance().getClient().getUpcomingMovies(ApiConstants.API_KEY,null,null).enqueue(new Callback<ResponseMovies>() {
-                @Override
-                public void onResponse(Call<ResponseMovies> call, Response<ResponseMovies> response) {
-                    int statusCode = response.code();
-                    updateData(response.body().results);
-                }
-
-                @Override
-                public void onFailure(Call<ResponseMovies> call, Throwable t) {
-                    // Log error here since request failed
-                }
-            });
-            MovieDBService.getInstance().getClient().getUpcomingMovies(ApiConstants.API_KEY,null,null).execute();
-
-
+            ResponseMovies responseMovies =  MovieDBService
+                    .getInstance()
+                    .getClient()
+                    .getUpcomingMovies( ApiConstants.API_KEY, page, null)
+                    .execute()
+                    .body();
+            updateData(responseMovies.results);
 
         } catch (IOException exception) {
-
+            exception.printStackTrace();
         }
     }
 
@@ -131,11 +120,13 @@ public class MainActivity extends AppCompatActivity implements ItemClickSupport.
 
     @OptionsItem(R.id.action_order_rating)
     void orderByRating() {
+        Toast.makeText(this,"Sorting by Rating", Toast.LENGTH_SHORT).show();
         movieAdaper.sortByRating();
     }
 
     @OptionsItem(R.id.action_order_pop)
     void orderByPopularity(){
+        Toast.makeText(this,"Sorting by Popularity", Toast.LENGTH_SHORT).show();
         movieAdaper.sortByPopularity();
     }
 

@@ -2,6 +2,7 @@ package com.pha.pipoca.clients;
 
 import com.pha.pipoca.model.api.Configuration;
 import com.pha.pipoca.model.api.Movie;
+import com.pha.pipoca.model.api.ResponseMovieTrailer;
 import com.pha.pipoca.model.api.ResponseMovies;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public interface MovieDBClient {
     Call<ResponseMovies> getUpcomingMovies(@Query("api_key") String api_key, @Query("page") Integer page, @Query("language") String language);
     @GET("movie/{movie_id}")
     Call<Movie> getDetail(@Path("movie_id") int movieId, @Query("language") String language);
+    @GET("movie/{movie_id}/videos")
+    Call<ResponseMovieTrailer> getTrailers(@Path("movie_id") int movieId, @Query("api_key") String api_key,  @Query("language") String language);
     @GET("configuration")
     Call<Configuration> getConfiguration(@Query("api_key") String api_key);
 }

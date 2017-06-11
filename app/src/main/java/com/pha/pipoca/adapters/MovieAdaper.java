@@ -44,7 +44,7 @@ public class MovieAdaper extends RecyclerViewAdapterBase<Movie, MovieItemView> {
         Collections.sort(items, new Comparator<Movie>() {
             @Override
             public int compare(Movie o1, Movie o2) {
-                return o1.popularity >= o2.popularity ? 1 : -1;
+                return o1.popularity < o2.popularity ? 1 : -1;
             }
         });
         notifyDataSetChanged();
@@ -54,7 +54,7 @@ public class MovieAdaper extends RecyclerViewAdapterBase<Movie, MovieItemView> {
         Collections.sort(items, new Comparator<Movie>() {
             @Override
             public int compare(Movie o1, Movie o2) {
-                return o1.voteAvarage >= o2.voteAvarage ? 1 : -1;
+                return o1.voteAvarage < o2.voteAvarage ? 1 : -1;
             }
         });
         notifyDataSetChanged();
