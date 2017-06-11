@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -32,4 +33,10 @@ public abstract class RecyclerViewAdapterBase<T, V extends View> extends Recycle
         items.addAll(newItens);
         notifyDataSetChanged();
     }
+
+    public List<T> getItems()
+    {
+        return items;
+    }
+
 }

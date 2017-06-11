@@ -12,6 +12,8 @@ import com.pha.pipoca.view.MovieItemView_;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -37,4 +39,24 @@ public class MovieAdaper extends RecyclerViewAdapterBase<Movie, MovieItemView> {
         view.bind(movie);
     }
 
+    public void sortByPopularity()
+    {
+        Collections.sort(items, new Comparator<Movie>() {
+            @Override
+            public int compare(Movie o1, Movie o2) {
+                return o1.popularity >= o2.popularity ? 1 : -1;
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+    public void sortByRating(){
+        Collections.sort(items, new Comparator<Movie>() {
+            @Override
+            public int compare(Movie o1, Movie o2) {
+                return o1.voteAvarage >= o2.voteAvarage ? 1 : -1;
+            }
+        });
+        notifyDataSetChanged();
+    }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_order_rating"
+        android:icon="@drawable/ic_star_rate_white_18dp"
+        android:title="Ordenar por avaliações"
+        app:showAsAction="ifRoom"/>
+
+    <!-- Settings, should always be in the overflow -->
+    <item android:id="@+id/action_order_pop"
+        android:icon="@drawable/ic_favorite_white_18dp"
+        android:title="Ordenar por popularidade"
+        app:showAsAction="ifRoom"/>
+</menu>

@@ -2,11 +2,13 @@ package com.pha.pipoca.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by phabh_000 on 6/10/2017.
  */
 
-public class Movie {
+public class Movie implements Serializable {
     @SerializedName("adult")
     public boolean adult;
     @SerializedName("backdrop_path")

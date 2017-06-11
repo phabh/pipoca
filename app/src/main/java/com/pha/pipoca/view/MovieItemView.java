@@ -1,7 +1,9 @@
 package com.pha.pipoca.view;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.pha.pipoca.R;
@@ -20,7 +22,7 @@ import org.androidannotations.annotations.ViewById;
 public class MovieItemView extends RelativeLayout {
 
     @ViewById(R.id.movieButton)
-    ImageButton imageButton;
+    ImageView imageButton;
 
     public MovieItemView(Context context) {
         super(context);
@@ -29,6 +31,9 @@ public class MovieItemView extends RelativeLayout {
     public void bind(Movie movie)
     {
         String posterImage = ImagesPathBuilder.getPoster(MovieDBService.getInstance().getConfiguration(), movie, 2);
+
+        Picasso.with(this.getContext()).setIndicatorsEnabled(true);
+
         Picasso.with(this.getContext())
                 .load(posterImage)
                 .into(imageButton);
